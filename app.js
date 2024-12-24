@@ -6,7 +6,6 @@ const fs = require("fs");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json({ limit: "500mb" }));
 app.use(express.urlencoded({ limit: "500mb", extended: true }));
 
