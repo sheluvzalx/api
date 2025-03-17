@@ -1,71 +1,39 @@
-const express = require("express");
-const youtubedl = require("youtube-dl-exec");
-const path = require("path");
-const cors = require("cors")
-const fs = require("fs");
-
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 
 const app = express();
+const PORT = 3000;
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json({ limit: "500mb" }));
-app.use(express.urlencoded({ limit: "500mb", extended: true }));
+// Middleware para permitir solicitudes desde tu aplicación React Native
 app.use(cors());
 
-
-app.use(cors({
-  origin: 'http://localhost:3000/',
-  methods: ['GET', 'POST'],
-}));
-
-const musicDir = path.join(__dirname, '');
-if (!fs.existsSync(musicDir)) {
-  fs.mkdirSync(musicDir);
-}
-
-app.get("/download", async (req, res) => {
-  const { url } = req.query;
-
-  if (!url) {
-    return res.status(400).send("Please provide a valid YouTube URL.");
-  }
-
+// Endpoint para obtener información del servidor de Discord
+app.get('/discord-info', async (req, res) => {
   try {
-    const options = {
-      output: path.join(musicDir, "%(title)s.%(ext)s"),
-      extractAudio: true,
-      audioFormat: "mp3",
-      audioQuality: 0,
-    };
+    const BOT_TOKEN = 'MTMzNTk4OTUzMzMzODExMjAzMA.G0VNvu.3RVhTpGVnoMhR9W7_Zpl2IBa3LJKwfBMPX3tHw'; // Reemplaza con tu token
+    const GUILD_ID = '1333936507580317817'; // Reemplaza con tu ID de servidor
 
-    const result = await youtubedl(url, options);
+    const response = await axios.get(`https://discord.com/api/v10/guilds/${GUILD_ID}`, {
+      headers: {
+        Authorization: `Bot ${BOT_TOKEN}`,
+      },
+    });
 
-    const downloadedFile = fs
-      .readdirSync(musicDir)
-      .find((file) => file.endsWith(".webm"));
+    const data = response.data;
 
-    if (!downloadedFile) {
-      return res.status(500).send("Downloaded file not found.");
-    }
-
-    const filePath = path.join(musicDir, downloadedFile);
-
-    res.download(filePath, downloadedFile, (err) => {
-      if (err) {
-        console.error("Error sending the file:", err);
-        return res.status(500).send("Error sending the file.");
-      }
-
-      fs.unlinkSync(filePath);
+    // Devuelve la información relevante
+    res.json({
+      memberCount: data.member_count || 0,
+      onlineMembers: data.presence_count || 0,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error processing the request.");
+    console.error('Error fetching Discord info:', error);
+    res.status(500).json({ error: 'Error fetching Discord information' });
   }
 });
 
-const PORT = 3000;
+// Inicia el servidor
 app.listen(PORT, () => {
-  console.log(`🔥 Server running at: http://localhost:${PORT}`);
-  console.log(`🔥 Use: http://localhost:${PORT}/download?url=VIDEO_URL`);
+  console.log(`[+] API RUNNING `);
 });
