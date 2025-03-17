@@ -8,7 +8,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
-  // package.json
 {
   "scripts": {
     "start": "node index.js",
