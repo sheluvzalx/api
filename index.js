@@ -44,7 +44,7 @@ app.get('/discord-info', async (req, res) => {
 
 // Ruta predeterminada para evitar errores 404
 app.get('/', (req, res) => {
-  res.send('API is running!');
+  res.sendFile(__dirname + '/index.html');
 });
 
 // Iniciar el servidor
