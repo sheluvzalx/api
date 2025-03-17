@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchDiscordInfo() {
     try {
       // Hacer la solicitud a tu API
-      const response = await fetch('https://apix-hazel.vercel.app/discord-info');
-      // const response = await fetch('http://localhost:3000/discord-info')
+      //const response = await fetch('https://apix-hazel.vercel.app/discord-info');
+      const response = await fetch('http://localhost:3000/discord-info')
       if (!response.ok) {
         throw new Error('Error al cargar los datos');
       }
