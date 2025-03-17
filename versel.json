@@ -10,6 +10,14 @@
     {
       "src": "/(.*)",
       "dest": "/"
+    },
+    {
+      "src": "/index.html",
+      "dest": "/index.html"
     }
-  ]
+  ],
+  "assets": {
+    "include": ["**/*"],
+    "exclude": ["node_modules/**/*"]
+  }
 }
