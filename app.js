@@ -3,18 +3,17 @@ const axios = require('axios');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
-
-// Middleware para permitir solicitudes desde tu aplicación React Native
 app.use(cors());
+
+const PORT = process.env.PORT || 3000;
 
 // Endpoint para obtener información del servidor de Discord
 app.get('/discord-info', async (req, res) => {
   try {
-    const BOT_TOKEN = 'MTMzNTk4OTUzMzMzODExMjAzMA.G0VNvu.3RVhTpGVnoMhR9W7_Zpl2IBa3LJKwfBMPX3tHw'; // Reemplaza con tu token
-    const GUILD_ID = '1333936507580317817'; // Reemplaza con tu ID de servidor
+    const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+    const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
-    const response = await axios.get(`https://discord.com/api/v10/guilds/${GUILD_ID}`, {
+    const response = await axios.get(`https://discord.com/api/v10/guilds/${GUILD_ID}/preview`, {
       headers: {
         Authorization: `Bot ${BOT_TOKEN}`,
       },
@@ -22,10 +21,9 @@ app.get('/discord-info', async (req, res) => {
 
     const data = response.data;
 
-    // Devuelve la información relevante
     res.json({
-      memberCount: data.member_count || 0,
-      onlineMembers: data.presence_count || 0,
+      memberCount: data.approximate_member_count || 0,
+      onlineMembers: data.approximate_presence_count || 0,
     });
   } catch (error) {
     console.error('Error fetching Discord info:', error);
@@ -33,7 +31,12 @@ app.get('/discord-info', async (req, res) => {
   }
 });
 
-// Inicia el servidor
+// Ruta predeterminada para evitar errores 404
+app.get('/', (req, res) => {
+  res.send('API is running!');
+});
+
+// Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`[+] API RUNNING `);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
