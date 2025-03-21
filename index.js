@@ -31,6 +31,7 @@ app.get('/discord-info', async (req, res) => {
     res.json({
       memberCount: data.approximate_member_count || 0,
       onlineMembers: data.approximate_presence_count || 0,
+      serverName: data.serverName
     });
   } catch (error) {
     console.error('Error fetching Discord info:', error.response ? error.response.data : error.message);
